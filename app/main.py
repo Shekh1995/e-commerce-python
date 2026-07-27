@@ -10,6 +10,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 def create_app(test_config=None):
     app = Flask(__name__)
+
+    @app.route("/")
+    def home() :
+        return render_template ("index.html")
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=8081)
     app.config.from_mapping(
         DATABASE=os.environ.get("DATABASE_PATH", str(Path(app.instance_path) / "store.db")),
     )
