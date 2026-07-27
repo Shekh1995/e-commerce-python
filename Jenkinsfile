@@ -27,7 +27,7 @@ pipeline {
                 sh '''
                     pkill -f 'gunicorn.*app.main:app' || true
                     JENKINS_NODE_COOKIE=dontKillMe nohup .venv/bin/gunicorn \\
-                    --bind 0.0.0.0:3000 app.main:app > app.log 2>&1 &
+                    --bind 0.0.0.0:8081 app.main:app > app.log 2>&1 &
                 '''
             }
         }
