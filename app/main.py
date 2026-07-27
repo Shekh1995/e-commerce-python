@@ -4,7 +4,7 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
-from flask import Flask, g, jsonify, request
+from flask import Flask, g, jsonify, render_template, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -57,6 +57,17 @@ def create_app(test_config=None):
             );
             """
         )
+        product_count = db.execute("SELECT COUNT(*) FROM products").fetchone()[0]
+        if product_count == 0:
+            db.executemany(
+                "INSERT INTO products(name, description, price_cents, stock) VALUES (?, ?, ?, ?)",
+                [
+                    ("Wireless Headphones", "Comfortable over-ear headphones with clear sound.", 4999, 18),
+                    ("Smart Watch", "Track your activity, notifications, and daily goals.", 7999, 12),
+                    ("Laptop Backpack", "Water-resistant backpack with a padded laptop sleeve.", 3599, 24),
+                    ("Portable Speaker", "Compact wireless speaker with rich, room-filling sound.", 2999, 20),
+                ],
+            )
         db.commit()
 
     def error(message, status=400):
@@ -79,6 +90,10 @@ def create_app(test_config=None):
     @app.get("/health")
     def health():
         return {"status": "ok"}
+
+    @app.get("/")
+    def storefront():
+        return render_template("index.html")
 
     @app.post("/auth/register")
     def register():
